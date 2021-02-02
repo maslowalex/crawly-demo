@@ -34,7 +34,7 @@ defmodule AutoriaCars.Spider do
     model = document |> Floki.find("h1") |> Floki.find("span") |> List.last() |> Floki.text()
     title = document |> Floki.find(".heading") |> Floki.text()
     price = document |> Floki.find("#showLeftBarView .price strong") |> Floki.text()
-    mileage = document |> Floki.find(".base-information") |> Floki.text()
+    mileage = document |> Floki.find(".base-information") |> Floki.text() |> String.trim()
 
     %{
       title: title,
@@ -55,8 +55,8 @@ defmodule AutoriaCars.Spider do
   end
 
   defp start_urls() do
-    Enum.map(0..100, fn page_number -> 
-      "https://auto.ria.com/uk/search/?indexName=auto,order_auto,newauto_search&body.id[0]=3&body.id[3]=4&body.id[4]=2&categories.main.id=1&price.USD.gte=6000&price.USD.lte=10000&price.currency=1&abroad.not=0&custom.not=1&page=#{page_number}&size=20"
+    Enum.map(1..3000, fn page_number -> 
+      "https://auto.ria.com/uk/search/?indexName=auto,order_auto,newauto_search&year[0].gte=2010&year[0].lte=2020&categories.main.id=1&country.import.usa.not=-1&price.currency=1&abroad.not=0&custom.not=1&page=#{page_number}&size=20"
     end)
   end
 end
