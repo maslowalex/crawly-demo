@@ -35,6 +35,8 @@ defmodule AutoriaCars.Spider do
     title = document |> Floki.find(".heading") |> Floki.text()
     price = document |> Floki.find("#showLeftBarView .price strong") |> Floki.text()
     mileage = document |> Floki.find(".base-information") |> Floki.text() |> String.trim()
+    item_id = extract_id(url)
+    image_path = store_img_and_get_path(document, item_id)
 
     %{
       title: title,
@@ -43,7 +45,8 @@ defmodule AutoriaCars.Spider do
       price: price,
       mileage: mileage,
       url: url,
-      item_id: extract_id(url)
+      item_id: item_id,
+      image_path: image_path
     }
   end
 
@@ -51,6 +54,23 @@ defmodule AutoriaCars.Spider do
     case Regex.run(~r"\d{7,9}", url) do
       nil -> nil
       [id] -> id
+    end
+  end
+
+  defp store_img_and_get_path(_document, _item_id = nil), do: nil
+  defp store_img_and_get_path(document, item_id) do
+    case document |> Floki.find(".photo-620x465") |> List.first |> Floki.find("source") |> Floki.attribute("srcset") |> List.first() do
+      nil -> nil
+      link -> link |> get_image(item_id)
+    end
+  end
+
+  defp get_image(link, item_id) do
+    with %HTTPoison.Response{body: body} <- HTTPoison.get!(link),
+        {:ok, _} <- File.write!("images/#{item_id}.webp", body) do
+          Path.absname("/images/#{item_id}.webp")
+        else
+          _ -> nil
     end
   end
 
