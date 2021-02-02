@@ -67,8 +67,8 @@ defmodule AutoriaCars.Spider do
 
   defp get_image(link, item_id) do
     with %HTTPoison.Response{body: body} <- HTTPoison.get!(link),
-        {:ok, _} <- File.write!("images/#{item_id}.webp", body) do
-          Path.absname("/images/#{item_id}.webp")
+          :ok <- File.write!("images/#{item_id}.webp", body) do
+            Path.absname("./images/#{item_id}.webp")
         else
           _ -> nil
     end
