@@ -22,11 +22,10 @@ defmodule AutoriaCars.Pipelines.SendTelegramMessage do
 
   defp msg_text(item) do
     """
-      Maker #{item.maker}
-      Model #{item.model}
-      Mileage #{item.mileage}
-      Price #{item.price}
-      URL: #{item.url}
+      #{item.maker} #{item.model}
+      #{item.mileage}
+      #{item.price}
+      #{item.url}
     """
   end
 end

@@ -3,6 +3,8 @@ defmodule AutoriaCars.Spider do
 
   alias Crawly.Utils
 
+  @images_directory Application.get_env(:crawly, :image_folder)
+
   @impl Crawly.Spider
   def base_url(), do: "https://auto.ria.com"
 
@@ -15,11 +17,8 @@ defmodule AutoriaCars.Spider do
 
     hrefs = 
       document
-      |> Floki.find(".content-bar")
-      |> Enum.map(fn car_info ->
-        Floki.find(car_info, ".m-link-ticket")
-        |> Floki.attribute("href")
-      end)
+      |> Floki.find(".content-bar a.m-link-ticket")
+      |> Enum.map(fn link -> Floki.attribute(link, "href") end)
 
     requests = hrefs |> List.flatten |> Utils.build_absolute_urls(base_url()) |> Utils.requests_from_urls()
 
@@ -67,8 +66,8 @@ defmodule AutoriaCars.Spider do
 
   defp get_image(link, item_id) do
     with %HTTPoison.Response{body: body} <- HTTPoison.get!(link),
-          :ok <- File.write!("images/#{item_id}.webp", body) do
-            Path.absname("./images/#{item_id}.webp")
+          :ok <- File.write!("#{@images_directory}/#{item_id}.webp", body) do
+            Path.absname("./#{@images_directory}/#{item_id}.webp")
         else
           _ -> nil
     end

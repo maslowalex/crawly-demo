@@ -27,3 +27,4 @@ autoria_cars-*.tar
 /tmp
 /output
 .env
+/images/*

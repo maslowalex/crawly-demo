@@ -6,7 +6,8 @@ config :crawly,
     {Crawly.Pipelines.DuplicatesFilter, item_id: :item_id},
     {Crawly.Pipelines.CSVEncoder, fields: [:maker, :model, :mileage, :price, :url, :image_path]},
     {Crawly.Pipelines.WriteToFile, extension: "csv", folder: "output"}
-  ]
+  ],
+  image_folder: "images"
 
 # config :nadia,
 #   token: "Yourtoken"
